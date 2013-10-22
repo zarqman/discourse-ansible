@@ -79,5 +79,6 @@ server {
     proxy_set_header Host $http_host;
 
     proxy_pass http://discourse;
+    proxy_read_timeout 10s;
   }
 }
