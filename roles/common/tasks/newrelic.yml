@@ -1,21 +1,18 @@
-- name: Add New Relic apt repository
+- name: add New Relic apt repository
   get_url: dest=/etc/apt/sources.list.d/newrelic.list url=http://download.newrelic.com/debian/newrelic.list
-  register: new_relic_repo
 
-- name: Add New Relic key
+- name: add New Relic key
   shell: apt-key adv --keyserver hkp://subkeys.pgp.net --recv-keys 548C16BF
-  only_if: ${new_relic_repo.changed}
 
-- name: Update apt cache
+- name: update apt cache
   apt: update_cache=yes
-  only_if: ${new_relic_repo.changed}
 
-- name: Install server monitor daemon
+- name: install server monitor daemon
   apt: pkg=newrelic-sysmond state=present
 
-- name: Add license key
+- name: add license key
   shell: nrsysmond-config --set license_key={{newrelic_license_key}}
 
-- name: Start sysmond service
+- name: start sysmond service
   service: name=newrelic-sysmond state=started
 

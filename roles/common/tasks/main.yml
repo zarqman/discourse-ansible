@@ -38,11 +38,7 @@
 
 - name: copy monitrc
   copy: src=monitrc dest=/etc/monit/monitrc
-  register: monitrc
-
-- name: restart monit
-  service: name=monit state=restarted
-  only_if: ${monitrc.changed}
+  notify: restart monit
 
 # Install Ruby.
 - include: rbenv.yml
@@ -53,8 +49,4 @@
 - name: set timezone to UTC
   lineinfile: dest=/etc/timezone state=present insertbefore=BOF
               regexp="^Etc/UTC" line="Etc/UTC"
-  register: timezone
-
-- name: reconfigure tzdata
-  shell: dpkg-reconfigure -f noninteractive tzdata
-  only_if: ${timezone.changed}
+  notify: reconfigure tzdata

@@ -7,25 +7,26 @@
 - hosts: redis
   sudo: True
   roles:
-  - redis
+    - { role: redis, tags: ['redis'] }
 
 - hosts: nginx
   sudo: True
   roles:
-  - nginx
+    - { role: nginx, tags: ['nginx'] }
 
 - hosts: postgres
   sudo: True
   roles:
-  - postgres
+    - { role: postgres, tags: ['postgres'] }
 
 - hosts: postgres
   sudo: True
   sudo_user: postgres
   tasks:
   - include: roles/postgres/tasks/setup_db.yml
+    tags: ['postgres']
 
 - hosts: discourse
   sudo: True
   roles:
-  - discourse
+    - { role: discourse, tags: ['discourse'] }

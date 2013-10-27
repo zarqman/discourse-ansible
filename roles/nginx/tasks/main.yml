@@ -1,33 +1,23 @@
 ---
-- name: nginx | add PPA
+- name: add PPA
   apt_repository: repo=ppa:nginx/stable state=present
-  register: add_nginx_ppa
 
-- name: nginx | update apt cache
+- name: update apt cache
   apt: update_cache=yes
-  only_if: ${add_nginx_ppa.changed}
 
-- name: nginx | install nginx
+- name: install nginx
   apt: pkg=nginx state=present
 
-- name: nginx | start nginx
+- name: start nginx
   service: name=nginx state=started
 
-- name: nginx | remove default site
+- name: remove default site
   file: path=/etc/nginx/sites-enabled/default state=absent
 
-- name: nginx | copy nginx.conf
+- name: copy nginx.conf
   copy: src=nginx.conf dest=/etc/nginx/nginx.conf
-  register: nginx_config
+  notify: restart nginx
 
-- name: nginx | restart nginx
-  service: name=nginx state=restarted
-  only_if: ${nginx_config.changed}
-
-- name: nginx | copy site configuration
+- name: copy site configuration
   template: src=discourse dest=/etc/nginx/sites-enabled/discourse
-  register: site_config
-
-- name: nginx | restart nginx
-  service: name=nginx state=restarted
-  only_if: ${site_config.changed}
+  notify: restart nginx
